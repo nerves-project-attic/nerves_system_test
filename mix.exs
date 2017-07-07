@@ -31,7 +31,7 @@ defmodule NervesSystemTest.Mixfile do
     [
       {:bootloader, "~> 0.1"},
       {:nerves_runtime, "~> 0.4"},
-      {:nerves_network, github: "mobileoverlord/nerves_network", branch: "default_config"},
+      {:nerves_network, github: "nerves-project/nerves_network", branch: "default_config"},
       {:phoenix_channel_client, github: "mobileoverlord/phoenix_channel_client"},
       {:poison, "~> 2.1"}
     ]
