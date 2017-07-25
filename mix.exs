@@ -15,7 +15,9 @@ defmodule NervesSystemTest.Mixfile do
   # Type `mix help compile.app` for more information.
   def application() do
     [mod: {NervesSystemTest.Application, []},
-     extra_applications: [:logger, :websocket_client, :ssl, :inets, :mix, :ex_unit]]
+     extra_applications: [:logger, :websocket_client, :ssl, :inets,
+      :mix, :ex_unit
+    ]]
   end
 
   # Dependencies can be Hex packages:
@@ -30,9 +32,12 @@ defmodule NervesSystemTest.Mixfile do
   def deps do
     [
       {:bootloader, "~> 0.1"},
+      #{:bootloader, path: "../bootloader"},
       {:nerves_runtime, "~> 0.4"},
-      {:nerves_network, github: "nerves-project/nerves_network", branch: "default_config"},
-      {:phoenix_channel_client, github: "mobileoverlord/phoenix_channel_client"},
+      {:nerves_network, "~> 0.1"},
+      {:nerves_firmware_ssh, "~> 0.1"},
+      {:phoenix_gen_socket_client, "~> 1.1.1"},
+      {:websocket_client, github: "sanmiguel/websocket_client", tag: "1.2.4"},
       {:poison, "~> 2.1"}
     ]
   end

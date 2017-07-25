@@ -1,4 +1,4 @@
-defmodule Nerves.System.Test.Fwup do
+defmodule NervesSystemTest.Fwup do
   use GenServer
   require Logger
 

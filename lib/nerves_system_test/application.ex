@@ -5,12 +5,12 @@ defmodule NervesSystemTest.Application do
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
-
+    socket_opts = Application.get_env(:nerves_system_test, NervesTestServer.Socket)
     # Define workers and child supervisors to be supervised
     children = [
-      # worker(NervesSystemTest.Worker, [arg1, arg2, arg3]),
-      worker(Nerves.System.Test.Server, []),
+      worker(NervesSystemTest.Channel, [socket_opts])
     ]
+
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

@@ -1,8 +1,8 @@
-defmodule Nerves.System.Test.HTTPClient do
+defmodule NervesSystemTest.HTTPClient do
   use GenServer
 
   require Logger
-  alias Nerves.System.Test.Fwup
+  alias NervesSystemTest.Fwup
 
   @redirect_status_codes [301, 302, 303, 307, 308]
 
