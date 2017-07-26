@@ -18,12 +18,12 @@ defmodule NervesSystemTest.Channel do
   def init(url) do
     {:ok, hostname} = :inet.gethostname()
     hostname = to_string(hostname)
-    target = Application.get_env(:nerves_system_test, :target)
+    system = Application.get_env(:nerves_system_test, :system)
     send(self(), :test_begin)
     {:connect, url, %{
       topic: "device:#{hostname}",
       hostname: hostname,
-      target: target,
+      system: system,
       status: :testing,
       vcs_id: Nerves.Runtime.KV.get_active(:nerves_fw_vcs_identifier),
       vcs_branch: Nerves.Runtime.KV.get_active(:nerves_fw_misc),
@@ -88,7 +88,7 @@ defmodule NervesSystemTest.Channel do
 
   def handle_info({:test_result, {:ok, result}}, transport, s) do
     s = %{s | test_results: result, status: :ready}
-    payload = Map.take(s, [:test_results, :test_io])
+
     deliver_results(transport, s)
     Logger.debug "Received Results: #{inspect result}"
     {:ok, %{s | status: :deliver}}
@@ -115,7 +115,8 @@ defmodule NervesSystemTest.Channel do
   end
 
   defp deliver_results(transport, %{status: :deliver} = s) do
-    GenSocketClient.push(transport, s.topic, "test_results", s)
+    payload = Map.take(s, [:test_results, :test_io])
+    GenSocketClient.push(transport, s.topic, "test_results", payload)
   end
   defp deliver_results(_, _), do: :noop
 end
