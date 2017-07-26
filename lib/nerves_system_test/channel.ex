@@ -29,7 +29,6 @@ defmodule NervesSystemTest.Channel do
       vcs_branch: Nerves.Runtime.KV.get_active(:nerves_fw_misc),
       test_io: nil,
       test_results: nil,
-      results_delivered: false
     }}
   end
 
@@ -47,9 +46,7 @@ defmodule NervesSystemTest.Channel do
 
   def handle_joined(topic, _payload, transport, s) do
     Logger.info("joined the topic #{topic}")
-    unless s.results_received do
-      GenSocketClient.push(transport, s.topic, "test_results", s)
-    end
+    deliver_results(transport, s)
     {:ok, s}
   end
 
@@ -69,9 +66,9 @@ defmodule NervesSystemTest.Channel do
     {:ok, s}
   end
 
-  def handle_reply(_topic, _ref, %{"status" => "results_received"}, _transport, s) do
+  def handle_reply(_topic, _ref, %{"response" => %{"test" => "ok"}, "status" => "ok"}, _transport, s) do
     Logger.debug("Test results received")
-    {:ok, %{s | results_received: true}}
+    {:ok, %{s | status: :ready}}
   end
 
   def handle_reply(topic, _ref, payload, _transport, state) do
@@ -92,9 +89,9 @@ defmodule NervesSystemTest.Channel do
   def handle_info({:test_result, {:ok, result}}, transport, s) do
     s = %{s | test_results: result, status: :ready}
     payload = Map.take(s, [:test_results, :test_io])
-    GenSocketClient.push(transport, s.topic, "test_results", payload)
+    deliver_results(transport, s)
     Logger.debug "Received Results: #{inspect result}"
-    {:ok, s}
+    {:ok, %{s | status: :deliver}}
   end
 
   def handle_info(message, _transport, s) do
@@ -116,4 +113,9 @@ defmodule NervesSystemTest.Channel do
       end
     ExUnit.CaptureIO.capture_io(fun)
   end
+
+  defp deliver_results(transport, %{status: :deliver} = s) do
+    GenSocketClient.push(transport, s.topic, "test_results", s)
+  end
+  defp deliver_results(_, _), do: :noop
 end
