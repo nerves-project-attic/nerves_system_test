@@ -6,9 +6,9 @@ defmodule NervesSystemTest.HTTPClient do
 
   @redirect_status_codes [301, 302, 303, 307, 308]
 
-  def start_link() do
+  def start_link(cb) do
     start_httpc()
-    GenServer.start_link(__MODULE__, [])
+    GenServer.start_link(__MODULE__, [cb])
   end
 
   def stop(pid) do
@@ -19,7 +19,7 @@ defmodule NervesSystemTest.HTTPClient do
     GenServer.call(pid, {:get, url}, :infinity)
   end
 
-  def init([]) do
+  def init([cb]) do
     {:ok, fwup} = Fwup.start_link(self())
     Logger.configure level: :error
     {:ok, %{
@@ -30,7 +30,8 @@ defmodule NervesSystemTest.HTTPClient do
       filename: "",
       caller: nil,
       number_of_redirects: 0,
-      fwup: fwup
+      fwup: fwup,
+      callback: cb
     }}
   end
 
@@ -101,8 +102,13 @@ defmodule NervesSystemTest.HTTPClient do
     {:noreply, s}
   end
 
+  def handle_info({:fwup, :done} = msg, s) do
+    send(s.callback, msg)
+    {:noreply, s}
+  end
+
   defp start_httpc() do
-    :inets.start(:httpc, profile: :nerves_system_test) |> IO.inspect
+    :inets.start(:httpc, profile: :nerves_system_test)
     opts = [
       max_sessions: 8,
       max_keep_alive_length: 4,

@@ -3,6 +3,7 @@ defmodule NervesSystemTest.Channel do
   #use PhoenixChannelClient
   alias Phoenix.Channels.GenSocketClient
   alias Mix.Compilers.Test, as: CT
+  alias NervesSystemTest.HTTPClient
   @behaviour GenSocketClient
   require Logger
 
@@ -29,12 +30,14 @@ defmodule NervesSystemTest.Channel do
       vcs_branch: Nerves.Runtime.KV.get_active(:nerves_fw_misc),
       test_io: nil,
       test_results: nil,
+      http: nil
     }}
   end
 
   def handle_connected(transport, s) do
     Logger.info("connected")
-    GenSocketClient.join(transport, s.topic, s)
+    payload = Map.take(s, [:system, :status])
+    GenSocketClient.join(transport, s.topic, payload)
     {:ok, s}
   end
 
@@ -61,6 +64,13 @@ defmodule NervesSystemTest.Channel do
     {:ok, s}
   end
 
+  def handle_message(_topic, "apply", %{"fw" => fw_file}, _transport, s) do
+    Logger.debug("Download firmware: #{fw_file}")
+    {:ok, http} = HTTPClient.start_link(self())
+    HTTPClient.get(http, fw_file)
+    {:ok, %{s | http: http}}
+  end
+
   def handle_message(topic, event, payload, _transport, s) do
     Logger.warn("message on topic #{topic}: #{event} #{inspect payload}")
     {:ok, s}
@@ -71,6 +81,13 @@ defmodule NervesSystemTest.Channel do
     {:ok, %{s | status: :ready}}
   end
 
+  def handle_reply(_topic, _ref, %{"response" => %{"test" => "begin"}, "status" => "ok"}, _transport, s) do
+    Logger.debug("Test Begin")
+    Application.stop :system_registry
+    Nerves.Runtime.reboot()
+    {:stop, s}
+  end
+
   def handle_reply(topic, _ref, payload, _transport, state) do
     Logger.warn("reply on topic #{topic}: #{inspect payload}")
     {:ok, state}
@@ -79,6 +96,12 @@ defmodule NervesSystemTest.Channel do
   def handle_info(:connect, _transport, s) do
     Logger.info("connecting")
     {:connect, s}
+  end
+
+  def handle_info({:fwup, :done}, transport, s) do
+    Logger.debug "FWUP Finished"
+    GenSocketClient.push(transport, s.topic, "test_begin", %{})
+    {:ok, %{s | status: :rebooting}}
   end
 
   def handle_info(:test_begin, _transport, s) do
@@ -115,7 +138,7 @@ defmodule NervesSystemTest.Channel do
   end
 
   defp deliver_results(transport, %{status: :deliver} = s) do
-    payload = Map.take(s, [:test_results, :test_io])
+    payload = Map.take(s, [:test_results, :test_io, :status])
     GenSocketClient.push(transport, s.topic, "test_results", payload)
   end
   defp deliver_results(_, _), do: :noop

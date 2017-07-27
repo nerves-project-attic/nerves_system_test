@@ -34,15 +34,13 @@ defmodule NervesSystemTest.Fwup do
   end
 
   def handle_info({_port, {:data, response}}, state) do
-    # :ok = :ssh_channel.cast(state.cm, {:fwup_data, response})
     IO.write(:stderr, response)
     {:noreply, state}
   end
   def handle_info({_port, {:exit_status, status}}, state) do
     Logger.configure level: :debug
     Logger.info("fwup exited with status #{status}")
-    Application.stop :system_registry
-    Nerves.Runtime.reboot()
+    send(state.cm, {:fwup, :done})
     {:noreply, state}
   end
 end
