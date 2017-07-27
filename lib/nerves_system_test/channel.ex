@@ -85,7 +85,7 @@ defmodule NervesSystemTest.Channel do
     Logger.debug("Test Begin")
     Application.stop :system_registry
     Nerves.Runtime.reboot()
-    {:stop, s}
+    {:ok, s}
   end
 
   def handle_reply(topic, _ref, payload, _transport, state) do
