@@ -123,18 +123,46 @@ defmodule NervesSystemTest.Channel do
   end
 
   def run_tests do
-    priv_dir =
-      :code.priv_dir(:nerves_system_test) |> to_string
-    test_dir = Path.join([priv_dir, "test"])
-    test_files = Path.join([test_dir, "nerves_system_test_test.exs"])
-    Code.require_file Path.join([test_dir, "test_helper.exs"])
+    test_paths = test_paths()
+    Enum.each(test_paths, &require_test_helper/1)
+    test_pattern = "*_test.exs"
+    matched_test_files = Mix.Utils.extract_files(test_paths, test_pattern)
+    
     pid = self()
     fun =
       fn() ->
-        result = CT.require_and_run([test_files], [test_files], test_dir, [autorun: false])
+        result = CT.require_and_run([], matched_test_files, test_paths, [autorun: false])
         send(pid, {:test_result, result})
       end
     ExUnit.CaptureIO.capture_io(fun)
+  end
+
+  defp test_paths() do
+    tests = Application.get_env(:nerves_system_test, :tests) || default_tests()
+    Enum.map(tests, &parse_test_path/1)
+  end
+
+  defp parse_test_path({app, :priv_dir, path}) do
+    :code.priv_dir(app)
+    |> to_string
+    |> Path.join(path)
+  end
+
+  defp parse_test_path({_app, opt, _path}), do:
+    raise "#{inspect opt} is not implemented"
+
+  def default_tests() do
+    [{:nerves_system_test, :priv_dir, "test"}]
+  end
+
+  defp require_test_helper(dir) do
+    file = Path.join(dir, "test_helper.exs")
+
+    if File.exists?(file) do
+      Code.require_file file
+    else
+      Mix.raise "Cannot run tests because test helper file #{inspect file} does not exist"
+    end
   end
 
   defp deliver_results(transport, %{status: :deliver} = s) do
