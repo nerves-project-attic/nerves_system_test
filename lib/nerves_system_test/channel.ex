@@ -127,7 +127,7 @@ defmodule NervesSystemTest.Channel do
     Enum.each(test_paths, &require_test_helper/1)
     test_pattern = "*_test.exs"
     matched_test_files = Mix.Utils.extract_files(test_paths, test_pattern)
-    
+
     pid = self()
     fun =
       fn() ->
