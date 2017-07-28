@@ -31,7 +31,8 @@ defmodule NervesSystemTest.Mixfile do
   # Type "mix help deps" for more examples and options
   def deps do
     [
-      {:bootloader, "~> 0.1"},
+      #{:bootloader, "~> 0.1"},
+      {:bootloader, path: "../bootloader"},
       {:nerves_runtime, "~> 0.4"},
       {:nerves_network, "~> 0.1"},
       {:phoenix_gen_socket_client, "~> 1.1.1"},
