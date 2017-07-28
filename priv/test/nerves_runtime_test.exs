@@ -2,10 +2,6 @@ defmodule NervesRuntime.Test do
   use ExUnit.Case
 
   describe "application data partition" do
-    # on_exit fn ->
-    #   :os.cmd('umount /root')
-    # end
-
     test "can be written to" do
       file = "/root/tmp"
       content = "hello"
@@ -16,7 +12,7 @@ defmodule NervesRuntime.Test do
 
   describe "key value store" do
     test "can be read from" do
-      tests = Application.get_env(:nerves_system_test, :kv)
+      tests = Application.get_env(:nerves_runtime, :kv)
       assert Enum.all?(tests, fn({k, v}) ->
         v =
           to_string(v)
