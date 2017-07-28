@@ -25,8 +25,6 @@ defmodule NervesRuntime.Test do
           to_string(k)
           |> Nerves.Runtime.KV.get_active()
           |> String.trim()
-        IO.inspect k
-        #IO.inspect kv
         v == kv
       end)
 
