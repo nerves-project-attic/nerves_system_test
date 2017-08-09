@@ -17,10 +17,18 @@ defmodule NervesSystemTest.Fwup do
     fwup = System.find_executable("fwup")
     devpath = Nerves.Runtime.KV.get("nerves_fw_devpath") || "/dev/mmcblk0"
     task = "upgrade"
+    args = ["--apply", "--no-unmount", "-d", devpath,
+              "--task", task]
+    fw_config = Application.get_env(:nerves, :firmware)
 
+    args =
+      if public_key = fw_config[:public_key] do
+        args ++ ["--public-key", public_key]
+      else
+        args
+      end
     port = Port.open({:spawn_executable, fwup},
-      [{:args, ["--apply", "--no-unmount", "-d", devpath,
-                "--task", task]},
+      [{:args, args},
        :use_stdio,
        :binary,
        :exit_status
