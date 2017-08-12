@@ -19,7 +19,7 @@ defmodule NervesSystemTest.Fwup do
     task = "upgrade"
     args = ["--apply", "--no-unmount", "-d", devpath,
               "--task", task]
-    fw_config = Application.get_env(:nerves, :firmware)
+    fw_config = Application.get_env(:nerves_system_test, :firmware)
 
     args =
       if public_key = fw_config[:public_key] do
