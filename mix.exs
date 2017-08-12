@@ -35,7 +35,7 @@ defmodule NervesSystemTest.Mixfile do
       {:nerves_runtime, "~> 0.4"},
       {:nerves_network, "~> 0.1"},
       {:phoenix_gen_socket_client, "~> 1.1.1"},
-      {:websocket_client, github: "sanmiguel/websocket_client", tag: "1.2.4"},
+      {:websocket_client, "~> 1.2.4"},
       {:poison, "~> 2.1"}
     ]
   end
