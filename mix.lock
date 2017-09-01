@@ -9,4 +9,4 @@
   "phoenix_gen_socket_client": {:hex, :phoenix_gen_socket_client, "1.1.1", "d1fbe7f053a0e91eb4f6fa527c1c8a365da1a07b1d5c2993626cc899d98b36d2", [:mix], [], "hexpm"},
   "poison": {:hex, :poison, "2.2.0", "4763b69a8a77bd77d26f477d196428b741261a761257ff1cf92753a0d4d24a63", [:mix], [], "hexpm"},
   "system_registry": {:hex, :system_registry, "0.5.0", "f0b769e699cc072f036d3b1c4fd8ab0ec5ad3aa0bb02919ebad80cf92641bbfd", [:mix], [], "hexpm"},
-  "websocket_client": {:git, "https://github.com/sanmiguel/websocket_client.git", "c2a6cf11233cad54a7f7e6c89bca172f2b494f9d", [tag: "1.2.4"]}}
+  "websocket_client": {:hex, :websocket_client, "1.2.4", "14ec1ca4b6d247b44ccd9a80af8f6ca98328070f6c1d52a5cb00bc9d939d63b8", [:rebar3], [], "hexpm"}}
