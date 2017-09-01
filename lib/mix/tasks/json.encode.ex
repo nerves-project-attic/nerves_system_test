@@ -10,7 +10,10 @@ defmodule Mix.Tasks.Json.Encode do
 
   def run([file | argv]) do
     {opts2, _, opts} = OptionParser.parse(argv) |> IO.inspect
-    opts = Enum.into(opts ++ opts2, %{})
+    opts =
+      (opts ++ opts2)
+      |> Enum.map(&strip/1)
+      |> Enum.into(%{})
     file = Path.expand(file)
     with {:ok, json} <- Poison.encode(opts),
                  :ok <- File.write(file, json) do
@@ -18,5 +21,12 @@ defmodule Mix.Tasks.Json.Encode do
     else
       {:error, error} -> Mix.raise("Error writing json to file #{file} #{error}")
     end
+  end
+
+  def strip({k, v}) do
+    k = k
+      |> String.trim_leading("--")
+      |> String.replace("-", "_")
+    {k, v}
   end
 end
