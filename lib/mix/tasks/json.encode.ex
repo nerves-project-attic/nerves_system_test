@@ -10,10 +10,9 @@ defmodule Mix.Tasks.Json.Encode do
 
   def run([file | argv]) do
     {opts2, _, opts} = OptionParser.parse(argv) |> IO.inspect
-    opts =
-      (opts ++ opts2)
-      |> Enum.map(&strip/1)
-      |> Enum.into(%{})
+    opts = Enum.map(opts, &strip/1)
+    opts = (opts ++ opts2) |> Enum.into(%{})
+
     file = Path.expand(file)
     with {:ok, json} <- Poison.encode(opts),
                  :ok <- File.write(file, json) do
