@@ -52,44 +52,51 @@ defmodule NervesSystemTest.HTTPClient do
   end
 
   def handle_info({:http, {_, :stream_start, headers}}, s) do
-    {_, content_length} =
-      headers
-      |> Enum.find(fn({key, _}) -> key == 'content-length' end)
+    Logger.debug "Stream Start: #{inspect headers}" 
+    content_length = 
+      case Enum.find(headers, fn({key, _}) -> key == 'content-length' end) do
+        nil -> 0
+        {_, content_length} ->
+          {content_length, _} =
+            content_length
+            |> to_string()
+            |> Integer.parse()
+          content_length
+      end
 
-    {content_length, _} =
-      content_length
-      |> to_string()
-      |> Integer.parse()
-
-    {_, filename} =
-      headers
-      |> Enum.find(fn({key, _}) -> key == 'content-disposition' end)
-    filename =
-      filename
-      |> to_string
-      |> String.split(";")
-      |> List.last
-      |> String.trim
-      |> String.trim("filename=")
+    filename = 
+      case Enum.find(headers, fn({key, _}) -> key == 'content-disposition' end) do
+        nil -> Path.basename(s.url)
+        {_, filename} -> 
+          filename
+          |> to_string
+          |> String.split(";")
+          |> List.last
+          |> String.trim
+          |> String.trim("filename=")
+      end
+    
     {:noreply, %{s | content_length: content_length, filename: filename}}
   end
 
   def handle_info({:http, {_, :stream, data}}, s) do
     #size = byte_size(data) + s.buffer_size
     #buffer = s.buffer <> data
-    #Logger.debug "Send Chunk"
+    Logger.debug "Send Chunk"
     Fwup.send_chunk(s.fwup, data)
     #put_progress(size, s.content_length)
     {:noreply, s}
   end
 
   def handle_info({:http, {_, :stream_end, _headers}}, s) do
+    Logger.debug "Stream End"
     IO.write(:stderr, "\n")
     GenServer.reply(s.caller, {:ok, s.buffer})
     {:noreply, %{s | filename: "", content_length: 0, buffer: "", buffer_size: 0, url: nil}}
   end
 
   def handle_info({:http, {_ref, {{_, status_code, _}, headers, _body}}}, s) when status_code in @redirect_status_codes do
+    Logger.debug "Redirect"
     case Enum.find(headers, fn({key,_}) -> key == 'location' end) do
       {'location', next_url} ->
         handle_call({:get, List.to_string(next_url)}, s.caller, %{s | buffer: "", buffer_size: 0, number_of_redirects: s.number_of_redirects + 1})
@@ -98,6 +105,7 @@ defmodule NervesSystemTest.HTTPClient do
     end
   end
   def handle_info({:http, {error, _headers}}, s) do
+    Logger.error "Error: #{inspect error}"
     GenServer.reply(s.caller, {:error, error})
     {:noreply, s}
   end
