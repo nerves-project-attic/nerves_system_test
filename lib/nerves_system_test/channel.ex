@@ -36,6 +36,7 @@ defmodule NervesSystemTest.Channel do
 
   def handle_connected(transport, s) do
     Logger.info("connected")
+    System.cmd("ntpd", ["-q", "-p", "pool.ntp.org"])
     payload = Map.take(s, [:system, :status])
     GenSocketClient.join(transport, s.topic, payload)
     {:ok, s}
