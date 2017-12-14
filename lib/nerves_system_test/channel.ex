@@ -115,6 +115,7 @@ defmodule NervesSystemTest.Channel do
 
     deliver_results(transport, s)
     Logger.debug "Received Results: #{inspect result}"
+    NervesWatchdog.validate()
     {:ok, %{s | status: :deliver}}
   end
 
