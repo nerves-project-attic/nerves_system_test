@@ -79,6 +79,7 @@ defmodule NervesSystemTest.Channel do
 
   def handle_reply(_topic, _ref, %{"response" => %{"test" => "ok"}, "status" => "ok"}, _transport, s) do
     Logger.debug("Test results received")
+    NervesWatchdog.validate()
     {:ok, %{s | status: :ready}}
   end
 
@@ -115,7 +116,6 @@ defmodule NervesSystemTest.Channel do
 
     deliver_results(transport, s)
     Logger.debug "Received Results: #{inspect result}"
-    NervesWatchdog.validate()
     {:ok, %{s | status: :deliver}}
   end
 
