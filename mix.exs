@@ -31,7 +31,7 @@ defmodule NervesSystemTest.Mixfile do
   # Type "mix help deps" for more examples and options
   def deps do
     [
-      {:bootloader, "~> 0.1"},
+      {:shoehorn, "~> 0.2"},
       {:nerves_runtime, "~> 0.5"},
       {:nerves_network, "~> 0.1"},
       {:nerves_watchdog, github: "mobileoverlord/nerves_watchdog"},
