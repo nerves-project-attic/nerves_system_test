@@ -14,7 +14,7 @@ defmodule Mix.Tasks.Json.Encode do
     opts = (opts ++ opts2) |> Enum.into(%{})
 
     file = Path.expand(file)
-    with {:ok, json} <- Poison.encode(opts),
+    with {:ok, json} <- Jason.encode(opts),
                  :ok <- File.write(file, json) do
       :ok
     else
