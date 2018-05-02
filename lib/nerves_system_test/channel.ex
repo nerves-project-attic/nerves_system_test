@@ -9,10 +9,12 @@ defmodule NervesSystemTest.Channel do
 
   def start_link(opts) do
     url = opts[:url] || "ws://localhost:4000/socket/websocket"
+    socket_opts = opts[:socket_opts] || [serializer: Jason]
     GenSocketClient.start_link(
       __MODULE__,
       Phoenix.Channels.GenSocketClient.Transport.WebSocketClient,
-      url
+      url,
+      socket_opts
     )
   end
 
@@ -122,6 +124,10 @@ defmodule NervesSystemTest.Channel do
   def handle_info(message, _transport, s) do
     Logger.warn("Unhandled message #{inspect message}")
     {:ok, s}
+  end
+
+  def handle_call(_message, _from, _transport, s) do
+    {:reply, :ok, s}
   end
 
   def run_tests do
