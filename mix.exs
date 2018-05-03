@@ -35,7 +35,7 @@ defmodule NervesSystemTest.Mixfile do
       {:nerves_runtime, "~> 0.5"},
       {:nerves_network, "~> 0.1"},
       {:nerves_watchdog, github: "mobileoverlord/nerves_watchdog"},
-      {:phoenix_gen_socket_client, "~> 1.1.1"},
+      {:phoenix_gen_socket_client, "~> 2.0"},
       {:websocket_client, "~> 1.2.4"},
       {:jason, "~> 1.0"},
       {:system_registry_term_storage, "~> 0.1"}
