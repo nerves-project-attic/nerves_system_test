@@ -23,7 +23,7 @@ defmodule NervesSystemTest.Channel do
     hostname = to_string(hostname)
     system = Application.get_env(:nerves_system_test, :system)
     send(self(), :test_begin)
-    {:connect, url, %{
+    {:connect, url, [], %{
       topic: "device:#{hostname}",
       hostname: hostname,
       system: system,
