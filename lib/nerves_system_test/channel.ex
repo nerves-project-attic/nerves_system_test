@@ -3,13 +3,13 @@ defmodule NervesSystemTest.Channel do
   #use PhoenixChannelClient
   alias Phoenix.Channels.GenSocketClient
   alias Mix.Compilers.Test, as: CT
-  alias NervesSystemTest.HTTPClient
+  alias NervesSystemTest.{HTTPClient, JasonSerializer}
   @behaviour GenSocketClient
   require Logger
 
   def start_link(opts) do
     url = opts[:url] || "ws://localhost:4000/socket/websocket"
-    socket_opts = opts[:socket_opts] || [serializer: Jason]
+    socket_opts = opts[:socket_opts] || [serializer: JasonSerializer]
     GenSocketClient.start_link(
       __MODULE__,
       Phoenix.Channels.GenSocketClient.Transport.WebSocketClient,
