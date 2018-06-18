@@ -13,17 +13,19 @@ defmodule NervesRuntime.Test do
   describe "key value store" do
     test "can be read from" do
       tests = Application.get_env(:nerves_runtime, :kv)
-      assert Enum.all?(tests, fn({k, v}) ->
-        v =
-          to_string(v)
-          |> String.trim()
-        kv =
-          to_string(k)
-          |> Nerves.Runtime.KV.get_active()
-          |> String.trim()
-        v == kv
-      end)
 
+      assert Enum.all?(tests, fn {k, v} ->
+               v =
+                 to_string(v)
+                 |> String.trim()
+
+               kv =
+                 to_string(k)
+                 |> Nerves.Runtime.KV.get_active()
+                 |> String.trim()
+
+               v == kv
+             end)
     end
   end
 

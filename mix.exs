@@ -2,22 +2,24 @@ defmodule NervesSystemTest.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :nerves_system_test,
-     version: "0.1.0",
-     elixir: "~> 1.4",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps()]
+    [
+      app: :nerves_system_test,
+      version: "0.1.0",
+      elixir: "~> 1.4",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
   def application() do
-    [mod: {NervesSystemTest.Application, []},
-     extra_applications: [:logger, :websocket_client, :ssl, :inets,
-      :mix, :ex_unit
-    ]]
+    [
+      mod: {NervesSystemTest.Application, []},
+      extra_applications: [:logger, :websocket_client, :ssl, :inets, :mix, :ex_unit]
+    ]
   end
 
   # Dependencies can be Hex packages:

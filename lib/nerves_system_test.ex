@@ -1,3 +1,2 @@
 defmodule NervesSystemTest do
-  
 end
