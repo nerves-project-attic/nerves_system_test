@@ -29,4 +29,9 @@ defmodule NervesRuntime.Test do
     end
   end
 
+  test "hostname has the form nerves-id" do
+    {:ok, hostname} = :inet.gethostname()
+    hostname = to_string(hostname)
+    assert String.match?(hostname, ~r/nerves-[0-9]+/)
+  end
 end
