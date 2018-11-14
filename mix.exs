@@ -32,7 +32,7 @@ defmodule NervesSystemTest.Mixfile do
   def deps do
     [
       {:shoehorn, "~> 0.2"},
-      {:nerves_runtime, "~> 0.5"},
+      {:nerves_runtime, "~> 0.6"},
       {:nerves_network, "~> 0.1"},
       {:nerves_watchdog, github: "mobileoverlord/nerves_watchdog"},
       {:nerves_hub, github: "nerves-hub/nerves_hub", override: true},
