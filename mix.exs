@@ -35,8 +35,9 @@ defmodule NervesSystemTest.Mixfile do
       {:nerves_runtime, "~> 0.5"},
       {:nerves_network, "~> 0.1"},
       {:nerves_watchdog, github: "mobileoverlord/nerves_watchdog"},
-      {:phoenix_gen_socket_client, "~> 2.0"},
-      {:websocket_client, "~> 1.2.4"},
+      {:nerves_hub, github: "nerves-hub/nerves_hub", override: true},
+      {:nerves_hub_cli, github: "nerves-hub/nerves_hub_cli", override: true},
+      {:tesla, github: "teamon/tesla", override: true},
       {:jason, "~> 1.0"},
       {:system_registry_term_storage, "~> 0.1"}
     ]
